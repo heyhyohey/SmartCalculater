@@ -1,28 +1,52 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-enum tnumber {TEOF, TIDEN, TNUM, TASSIGN, TADD, TSEMI, TDOT, TBEGIN, TEDN, TIF, TTHEN, TPRINT, TENDIF, TELSE, TCOMMANDEND, ERROR};
+enum tnumber {TEOF, TIF, TTHEN, TELSE, TENDIF, TPRINT,
+	TASSIGN, TADD, TSUB, TMUL, TDIV, TEQUAL, TNOTEQUAL, TGREATER, TSMALLER, TGREATEROREQUAL, TSMALLEROREQUAL, TCOMMANDEND,
+	TLEFTPAREN, TRIGHTPAREN, TID, TINTEGER, TSTRING, TERROR
+	};
 %}
-letter	[a-zA-Z_]
-digit	[0-9]
+letter		[a-zA-Z]
+digit		[0-9]
+identifier	[{letter}][{letter}{digit}]
+integer		[1-9][{digit}]
 %%
-"if"									return(TIF);
-"then"									return(TTHEN);
-"else"									return(TELSE);
-"endif"									return(TENDIF);
-"print"									return(TPRINT);
-";"										return(TCOMMANDEND);
-[a-zA-Z]([1-9]|[1-9][0-9]|[a-zA-Z])*	return(TASSIGN);
-[ \t\n]									;
+"if"				return(TIF);
+"then"				return(TTHEN);
+"else"				return(TELSE);
+"endif"				return(TENDIF);
+"print"				return(TPRINT);
+"="					return(TASSIGN);
+"+"					return(TADD);
+"-"					return(TSUB);
+"*"					return(TMUL);
+"/"					return(TDIV);
+"=="				return(TEQUAL);
+"!="				return(TNOTEQUAL);
+">"					return(TGREATER);
+"<"					return(TSMALLER);
+">="				return(TGREATEROREQUAL);
+"<="				return(TSMALLEROREQUAL);
+";"					return(TCOMMANDEND);
+"{"					return(TLEFTPAREN);
+"}"					return(TRIGHTPAREN);
+{identifier}*		return(TID);
+{integer}*			return(TINTEGER);
+[\"({letter}|{digit})*\"]	return(TSTRING);
+[ \t\n]				;
 %%
-void main()
+void main(int argc, char *argv[])
 {
 	enum tnumber tn;
+	FILE* fp = NULL;
+
+	if(argc > 1) {
+		fp = fopen(argv[1], "r");
+		if(fp)
+			yyin = fp;
+	}
 	while((tn=yylex()) != TEOF) {
 		switch(tn) {
-			case TASSIGN:
-				printf("%s (id, identifier)\n", yytext);
-				break;
 			case TIF:
 				printf("%s (keyword if)\n", yytext);
 				break;
@@ -38,8 +62,56 @@ void main()
 			case TPRINT:
 				printf("%s (keyword print)\n", yytext);
 				break;
+			case TASSIGN:
+				printf("%s (assign)\n", yytext);
+				break;
+			case TADD:
+				printf("%s (add)\n", yytext);
+				break;
+			case TSUB:
+				printf("%s (subtract)\n", yytext);
+				break;
+			case TMUL:
+				printf("%s (multiply)\n", yytext);
+				break;
+			case TDIV:
+				printf("%s (divide)\n", yytext);
+				break;
+			case TEQUAL:
+				printf("%s (equal)\n", yytext);
+				break;
+			case TNOTEQUAL:
+				printf("%s (not equal)\n", yytext);
+				break;
+			case TGREATER:
+				printf("%s (greater)\n", yytext);
+				break;
+			case TSMALLER:
+				printf("%s (smaller)\n", yytext);
+				break;
+			case TGREATEROREQUAL:
+				printf("%s (greater or equal)\n", yytext);
+				break;
+			case TSMALLEROREQUAL:
+				printf("%s (smaller or equal)\n", yytext);
+				break;
 			case TCOMMANDEND:
 				printf("%s (command end)\n", yytext);
+				break;
+			case TLEFTPAREN:
+				printf("%s (left paren)\n", yytext);
+				break;
+			case TRIGHTPAREN:
+				printf("%s (right paren)\n", yytext);
+				break;
+			case TID:
+				printf("%s (id, id number)\n", yytext);
+				break;
+			case TINTEGER:
+				printf("%s (real number)\n", yytext);
+				break;
+			case TSTRING:
+				printf("%s (string)\n", yytext);
 				break;
 		}
 	}
