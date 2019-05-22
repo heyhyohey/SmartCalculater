@@ -1,15 +1,12 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+int id = 0;
 enum tnumber {TEOF, TIF, TTHEN, TELSE, TENDIF, TPRINT,
 	TASSIGN, TADD, TSUB, TMUL, TDIV, TEQUAL, TNOTEQUAL, TGREATER, TSMALLER, TGREATEROREQUAL, TSMALLEROREQUAL, TCOMMANDEND,
 	TLEFTPAREN, TRIGHTPAREN, TID, TINTEGER, TSTRING, TERROR
 	};
 %}
-letter		[a-zA-Z]
-digit		[0-9]
-identifier	[{letter}][{letter}{digit}]
-integer		[1-9][{digit}]
 %%
 "if"				return(TIF);
 "then"				return(TTHEN);
@@ -28,11 +25,11 @@ integer		[1-9][{digit}]
 ">="				return(TGREATEROREQUAL);
 "<="				return(TSMALLEROREQUAL);
 ";"					return(TCOMMANDEND);
-"{"					return(TLEFTPAREN);
-"}"					return(TRIGHTPAREN);
-{identifier}*		return(TID);
-{integer}*			return(TINTEGER);
-[\"({letter}|{digit})*\"]	return(TSTRING);
+"("					return(TLEFTPAREN);
+")"					return(TRIGHTPAREN);
+[a-zA-Z][a-zA-Z0-9]*									return(TID);
+[1-9][0-9]*|\.[0-9]*|[1-9][0-9]\.|[1-9][0-9]*\.[0-9]*	return(TINTEGER);
+\"(\\.|[^\\"\n])*\"										return(TSTRING);
 [ \t\n]				;
 %%
 void main(int argc, char *argv[])
@@ -44,6 +41,8 @@ void main(int argc, char *argv[])
 		fp = fopen(argv[1], "r");
 		if(fp)
 			yyin = fp;
+		else
+			exit(1);
 	}
 	while((tn=yylex()) != TEOF) {
 		switch(tn) {
@@ -105,7 +104,7 @@ void main(int argc, char *argv[])
 				printf("%s (right paren)\n", yytext);
 				break;
 			case TID:
-				printf("%s (id, id number)\n", yytext);
+				printf("%s (id, %d)\n", yytext, id);
 				break;
 			case TINTEGER:
 				printf("%s (real number)\n", yytext);
