@@ -480,13 +480,26 @@ char *yytext;
 #line 2 "smart_calculator.l"
 #include <stdio.h>
 #include <stdlib.h>
-int id = 0;
+
+typedef struct entry{
+	char* symbol_name;
+	int index;
+	struct entry* np;
+}ENTRY;
+
+typedef struct symbol_table{
+	ENTRY* head;
+}SYMBOL_TABLE;
+
 enum tnumber {TEOF, TIF, TTHEN, TELSE, TENDIF, TPRINT,
 	TASSIGN, TADD, TSUB, TMUL, TDIV, TEQUAL, TNOTEQUAL, TGREATER, TSMALLER, TGREATEROREQUAL, TSMALLEROREQUAL, TCOMMANDEND,
 	TLEFTPAREN, TRIGHTPAREN, TID, TINTEGER, TSTRING, TERROR
 	};
-#line 489 "lex.yy.c"
-#line 490 "lex.yy.c"
+
+SYMBOL_TABLE st;
+
+#line 502 "lex.yy.c"
+#line 503 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -703,9 +716,9 @@ YY_DECL
 		}
 
 	{
-#line 10 "smart_calculator.l"
+#line 23 "smart_calculator.l"
 
-#line 709 "lex.yy.c"
+#line 722 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -764,126 +777,126 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 11 "smart_calculator.l"
+#line 24 "smart_calculator.l"
 return(TIF);
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 12 "smart_calculator.l"
+#line 25 "smart_calculator.l"
 return(TTHEN);
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 13 "smart_calculator.l"
+#line 26 "smart_calculator.l"
 return(TELSE);
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 14 "smart_calculator.l"
+#line 27 "smart_calculator.l"
 return(TENDIF);
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 15 "smart_calculator.l"
+#line 28 "smart_calculator.l"
 return(TPRINT);
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 16 "smart_calculator.l"
+#line 29 "smart_calculator.l"
 return(TASSIGN);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 17 "smart_calculator.l"
+#line 30 "smart_calculator.l"
 return(TADD);
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 18 "smart_calculator.l"
+#line 31 "smart_calculator.l"
 return(TSUB);
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 19 "smart_calculator.l"
+#line 32 "smart_calculator.l"
 return(TMUL);
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 20 "smart_calculator.l"
+#line 33 "smart_calculator.l"
 return(TDIV);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 21 "smart_calculator.l"
+#line 34 "smart_calculator.l"
 return(TEQUAL);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 22 "smart_calculator.l"
+#line 35 "smart_calculator.l"
 return(TNOTEQUAL);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 23 "smart_calculator.l"
+#line 36 "smart_calculator.l"
 return(TGREATER);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 24 "smart_calculator.l"
+#line 37 "smart_calculator.l"
 return(TSMALLER);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 25 "smart_calculator.l"
+#line 38 "smart_calculator.l"
 return(TGREATEROREQUAL);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 26 "smart_calculator.l"
+#line 39 "smart_calculator.l"
 return(TSMALLEROREQUAL);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 27 "smart_calculator.l"
+#line 40 "smart_calculator.l"
 return(TCOMMANDEND);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 28 "smart_calculator.l"
+#line 41 "smart_calculator.l"
 return(TLEFTPAREN);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 29 "smart_calculator.l"
+#line 42 "smart_calculator.l"
 return(TRIGHTPAREN);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 30 "smart_calculator.l"
+#line 43 "smart_calculator.l"
 return(TID);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 31 "smart_calculator.l"
+#line 44 "smart_calculator.l"
 return(TINTEGER);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 32 "smart_calculator.l"
+#line 45 "smart_calculator.l"
 return(TSTRING);
 	YY_BREAK
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 33 "smart_calculator.l"
+#line 46 "smart_calculator.l"
 ;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 34 "smart_calculator.l"
+#line 47 "smart_calculator.l"
 ECHO;
 	YY_BREAK
-#line 887 "lex.yy.c"
+#line 900 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1888,7 +1901,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 34 "smart_calculator.l"
+#line 47 "smart_calculator.l"
 
 void main(int argc, char *argv[])
 {
@@ -1962,7 +1975,7 @@ void main(int argc, char *argv[])
 				printf("%s (right paren)\n", yytext);
 				break;
 			case TID:
-				printf("%s (id, %d)\n", yytext, id);
+				printf("%s (id, index)\n", yytext);
 				break;
 			case TINTEGER:
 				printf("%s (real number)\n", yytext);

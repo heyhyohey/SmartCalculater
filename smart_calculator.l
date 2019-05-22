@@ -1,11 +1,54 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-int id = 0;
+#include <string.h>
+
+// Simbol table entry structure
+typedef struct entry {
+	char* symbol;
+	int index;
+	struct entry* np;
+}ENTRY;
+
+// Simbol table structure
+typedef struct symbol_table {
+	ENTRY* head;
+}SYMBOL_TABLE;
+
+// Search a token in the simbol table
+int search(char* token) {
+	int result = 0;
+	ENTRY* ne = NULL;
+
+	if(st->head == NULL)
+		// not matched
+		return 0;
+	else
+		ne = head;
+		while(ne != NULL) {
+			if(strcmp(ne->symbol, token) == 0)
+				// matched
+				return 1;
+			ne = ne->np;
+	// not matched
+	return 0;
+}
+
+// Insert a token in the simbol table
+void insert(char* token) {
+	
+}
+
+// Make a table entry
+ENTRY* make_entry(char* symbol, int 
+
 enum tnumber {TEOF, TIF, TTHEN, TELSE, TENDIF, TPRINT,
 	TASSIGN, TADD, TSUB, TMUL, TDIV, TEQUAL, TNOTEQUAL, TGREATER, TSMALLER, TGREATEROREQUAL, TSMALLEROREQUAL, TCOMMANDEND,
 	TLEFTPAREN, TRIGHTPAREN, TID, TINTEGER, TSTRING, TERROR
 	};
+
+SYMBOL_TABLE st;
+
 %}
 %%
 "if"				return(TIF);
@@ -36,6 +79,8 @@ void main(int argc, char *argv[])
 {
 	enum tnumber tn;
 	FILE* fp = NULL;
+	
+	st.
 
 	if(argc > 1) {
 		fp = fopen(argv[1], "r");
@@ -104,7 +149,7 @@ void main(int argc, char *argv[])
 				printf("%s (right paren)\n", yytext);
 				break;
 			case TID:
-				printf("%s (id, %d)\n", yytext, id);
+				printf("%s (id, index)\n", yytext);
 				break;
 			case TINTEGER:
 				printf("%s (real number)\n", yytext);
