@@ -5,50 +5,69 @@
 
 // Simbol table entry structure
 typedef struct entry {
-	char* symbol;
+	char symbol[512];
 	int index;
 	struct entry* np;
 }ENTRY;
 
-// Simbol table structure
-typedef struct symbol_table {
-	ENTRY* head;
-}SYMBOL_TABLE;
+int serch(char*);
+void insert(char*);
+ENTRY* make_entry(char*);
+
+ENTRY* head = NULL;
+int global_index = 0;
 
 // Search a token in the simbol table
-int search(char* token) {
-	int result = 0;
-	ENTRY* ne = NULL;
+int search(char* symbol) {
+	ENTRY* current_entry = NULL;
 
-	if(st->head == NULL)
+	if(head == NULL) {
 		// not matched
 		return 0;
-	else
-		ne = head;
-		while(ne != NULL) {
-			if(strcmp(ne->symbol, token) == 0)
+		printf("asdfasdfasdfasdf");
+	}
+	else {
+		current_entry = head;
+		while(current_entry != NULL) {
+			if(strcmp(current_entry->symbol, symbol) == 0)
 				// matched
-				return 1;
-			ne = ne->np;
+				return current_entry->index;
+			current_entry = current_entry->np;
+		}
+	}
 	// not matched
 	return 0;
 }
 
 // Insert a token in the simbol table
-void insert(char* token) {
+void insert(char* symbol) {
+	ENTRY* current_entry = NULL;
 	
+	if(head == NULL)
+		head = make_entry(symbol);
+	else {
+		current_entry = head;
+		while(current_entry->np != NULL) {
+			current_entry= current_entry->np;
+		}
+		current_entry->np = make_entry(symbol);
+	}
 }
 
 // Make a table entry
-ENTRY* make_entry(char* symbol, int 
+ENTRY* make_entry(char* symbol) {
+	ENTRY* new_entry = malloc(sizeof(ENTRY));
+	strcpy(new_entry->symbol, symbol);
+	new_entry->index = ++global_index;
+	new_entry->np = NULL;
+
+	return new_entry;
+}
 
 enum tnumber {TEOF, TIF, TTHEN, TELSE, TENDIF, TPRINT,
 	TASSIGN, TADD, TSUB, TMUL, TDIV, TEQUAL, TNOTEQUAL, TGREATER, TSMALLER, TGREATEROREQUAL, TSMALLEROREQUAL, TCOMMANDEND,
 	TLEFTPAREN, TRIGHTPAREN, TID, TINTEGER, TSTRING, TERROR
 	};
-
-SYMBOL_TABLE st;
-
 %}
 %%
 "if"				return(TIF);
@@ -77,10 +96,9 @@ SYMBOL_TABLE st;
 %%
 void main(int argc, char *argv[])
 {
+	int isExist = 0;
 	enum tnumber tn;
 	FILE* fp = NULL;
-	
-	st.
 
 	if(argc > 1) {
 		fp = fopen(argv[1], "r");
@@ -89,7 +107,11 @@ void main(int argc, char *argv[])
 		else
 			exit(1);
 	}
+
+	printf("--Token Stream\n\n");
+
 	while((tn=yylex()) != TEOF) {
+		isExist = 0;
 		switch(tn) {
 			case TIF:
 				printf("%s (keyword if)\n", yytext);
@@ -149,7 +171,13 @@ void main(int argc, char *argv[])
 				printf("%s (right paren)\n", yytext);
 				break;
 			case TID:
-				printf("%s (id, index)\n", yytext);
+				isExist = search(yytext);
+				if(isExist)
+					printf("%s (id, %d)\n", yytext, isExist);
+				else {
+					insert(yytext);
+					printf("%s (id, %d)\n", yytext, global_index);
+				}	
 				break;
 			case TINTEGER:
 				printf("%s (real number)\n", yytext);
@@ -163,5 +191,26 @@ void main(int argc, char *argv[])
 
 int yywrap()
 {
+	ENTRY* current_entry = head;
+	ENTRY* next_entry = NULL;
+
+	printf("\n\n--id table\n\n");
+
+	if(head == NULL)
+		printf("(empty)\n");
+	else {
+		while(current_entry != NULL) {
+			printf("(%s, %d)\n", current_entry->symbol, current_entry->index);
+			current_entry = current_entry->np;
+		}
+	}
+
+	current_entry = head;
+
+	while(current_entry != NULL) {
+		next_entry = current_entry->np;
+		free(current_entry);
+		current_entry = next_entry;
+	}
 	return 1;
 }
