@@ -500,79 +500,15 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "smart_calculator.l"
-#line 2 "smart_calculator.l"
+#line 1 "scanner.l"
+#line 2 "scanner.l"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "y.tab.h"
+#include "parser.tab.h"
 
-// Simbol table entry structure
-typedef struct entry {
-	char symbol[512];
-	int index;
-	struct entry* np;
-}ENTRY;
-
-int serch(char*);
-void insert(char*);
-ENTRY* make_entry(char*);
-
-ENTRY* head = NULL;
-int global_index = 0;
-
-// Search a token in the simbol table
-int search(char* symbol) {
-	ENTRY* current_entry = NULL;
-
-	if(head == NULL) {
-		// not matched
-		return 0;
-		printf("asdfasdfasdfasdf");
-	}
-	else {
-		current_entry = head;
-		while(current_entry != NULL) {
-			if(strcmp(current_entry->symbol, symbol) == 0)
-				// matched
-				return current_entry->index;
-			current_entry = current_entry->np;
-		}
-	}
-	// not matched
-	return 0;
-}
-
-// Insert a token in the simbol table
-void insert(char* symbol) {
-	ENTRY* current_entry = NULL;
-	
-	if(head == NULL)
-		head = make_entry(symbol);
-	else {
-		current_entry = head;
-		while(current_entry->np != NULL) {
-			current_entry= current_entry->np;
-		}
-		current_entry->np = make_entry(symbol);
-	}
-}
-
-// Make a table entry
-ENTRY* make_entry(char* symbol) {
-	ENTRY* new_entry = malloc(sizeof(ENTRY));
-	strcpy(new_entry->symbol, symbol);
-	new_entry->index = ++global_index;
-	new_entry->np = NULL;
-
-	return new_entry;
-}
-
-enum tnumber {TEOF, TIF, TTHEN, TELSE, TENDIF, TPRINT,
-	TASSIGN, TADD, TSUB, TMUL, TDIV, TEQUAL, TNOTEQUAL, TGREATER, TSMALLER, TGREATEROREQUAL, TSMALLEROREQUAL, TCOMMANDEND,
-	TLEFTPAREN, TRIGHTPAREN, TID, TINTEGER, TSTRING, TERROR
-	};
-#line 576 "lex.yy.c"
+extern int yyparse();
+#line 512 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -790,9 +726,9 @@ YY_DECL
 		}
 
 	{
-#line 73 "smart_calculator.l"
+#line 10 "scanner.l"
 
-#line 796 "lex.yy.c"
+#line 732 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -851,126 +787,126 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 74 "smart_calculator.l"
-return(TIF);
+#line 11 "scanner.l"
+{ return(IF); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 75 "smart_calculator.l"
-return(TTHEN);
+#line 12 "scanner.l"
+{ return(THEN); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 76 "smart_calculator.l"
-return(TELSE);
+#line 13 "scanner.l"
+{ return(ELSE); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 77 "smart_calculator.l"
-return(TENDIF);
+#line 14 "scanner.l"
+{ return(ENDIF); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 78 "smart_calculator.l"
-return(TPRINT);
+#line 15 "scanner.l"
+{ return(PRINT); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 79 "smart_calculator.l"
-return(TASSIGN);
+#line 16 "scanner.l"
+{ return(ASSIGN); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 80 "smart_calculator.l"
-return(TADD);
+#line 17 "scanner.l"
+{ return(ADD); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 81 "smart_calculator.l"
-return(TSUB);
+#line 18 "scanner.l"
+{ return(SUB); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 82 "smart_calculator.l"
-return(TMUL);
+#line 19 "scanner.l"
+{ return(MUL); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 83 "smart_calculator.l"
-return(TDIV);
+#line 20 "scanner.l"
+{ return(DIV); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 84 "smart_calculator.l"
-return(TEQUAL);
+#line 21 "scanner.l"
+{ return(EQUAL); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 85 "smart_calculator.l"
-return(TNOTEQUAL);
+#line 22 "scanner.l"
+{ return(NOTEQUAL); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 86 "smart_calculator.l"
-return(TGREATER);
+#line 23 "scanner.l"
+{ return(GREATER); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 87 "smart_calculator.l"
-return(TSMALLER);
+#line 24 "scanner.l"
+{ return(SMALLER); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 88 "smart_calculator.l"
-return(TGREATEROREQUAL);
+#line 25 "scanner.l"
+{ return(GREATEROREQUAL); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 89 "smart_calculator.l"
-return(TSMALLEROREQUAL);
+#line 26 "scanner.l"
+{ return(SMALLEROREQUAL); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 90 "smart_calculator.l"
-return(TCOMMANDEND);
+#line 27 "scanner.l"
+{ return(COMMANDEND); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 91 "smart_calculator.l"
-return(TLEFTPAREN);
+#line 28 "scanner.l"
+{ return(LEFTPAREN); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 92 "smart_calculator.l"
-return(TRIGHTPAREN);
+#line 29 "scanner.l"
+{ return(RIGHTPAREN); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 93 "smart_calculator.l"
-return(TID);
+#line 30 "scanner.l"
+{ yylval.string = strdup(yytext); return(ID); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 94 "smart_calculator.l"
-return(TINTEGER);
+#line 31 "scanner.l"
+{ yylval.string = strdup(yytext); return(NUMBER); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 95 "smart_calculator.l"
-return(TSTRING);
+#line 32 "scanner.l"
+{ yylval.string = strdup(yytext); return(STRING); }
 	YY_BREAK
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 96 "smart_calculator.l"
+#line 33 "scanner.l"
 ;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 97 "smart_calculator.l"
+#line 34 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 974 "lex.yy.c"
+#line 910 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1971,127 +1907,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 97 "smart_calculator.l"
+#line 34 "scanner.l"
 
 
-void main(int argc, char *argv[])
-{
-	int isExist = 0;
-	enum tnumber tn;
-	FILE* fp = NULL;
-
-	if(argc > 1) {
-		fp = fopen(argv[1], "r");
-		if(fp)
-			yyin = fp;
-		else
-			exit(1);
-	}
-
-	printf("--Token Stream\n\n");
-
-	while((tn=yylex()) != TEOF) {
-		isExist = 0;
-		switch(tn) {
-			case TIF:
-				printf("%s (keyword if)\n", yytext);
-				break;
-			case TTHEN:
-				printf("%s (keyword then)\n", yytext);
-				break;
-			case TELSE:
-				printf("%s (keyword else)\n", yytext);
-				break;
-			case TENDIF:
-				printf("%s (keyword endif)\n", yytext);
-				break;
-			case TPRINT:
-				printf("%s (keyword print)\n", yytext);
-				break;
-			case TASSIGN:
-				printf("%s (assign)\n", yytext);
-				break;
-			case TADD:
-				printf("%s (add)\n", yytext);
-				break;
-			case TSUB:
-				printf("%s (subtract)\n", yytext);
-				break;
-			case TMUL:
-				printf("%s (multiply)\n", yytext);
-				break;
-			case TDIV:
-				printf("%s (divide)\n", yytext);
-				break;
-			case TEQUAL:
-				printf("%s (equal)\n", yytext);
-				break;
-			case TNOTEQUAL:
-				printf("%s (not equal)\n", yytext);
-				break;
-			case TGREATER:
-				printf("%s (greater)\n", yytext);
-				break;
-			case TSMALLER:
-				printf("%s (smaller)\n", yytext);
-				break;
-			case TGREATEROREQUAL:
-				printf("%s (greater or equal)\n", yytext);
-				break;
-			case TSMALLEROREQUAL:
-				printf("%s (smaller or equal)\n", yytext);
-				break;
-			case TCOMMANDEND:
-				printf("%s (command end)\n", yytext);
-				break;
-			case TLEFTPAREN:
-				printf("%s (left paren)\n", yytext);
-				break;
-			case TRIGHTPAREN:
-				printf("%s (right paren)\n", yytext);
-				break;
-			case TID:
-				isExist = search(yytext);
-				if(isExist)
-					printf("%s (id, %d)\n", yytext, isExist);
-				else {
-					insert(yytext);
-					printf("%s (id, %d)\n", yytext, global_index);
-				}	
-				break;
-			case TINTEGER:
-				printf("%s (real number)\n", yytext);
-				break;
-			case TSTRING:
-				printf("%s (string)\n", yytext);
-				break;
-		}
-	}
-}
-
-int yywrap()
-{
-	ENTRY* current_entry = head;
-	ENTRY* next_entry = NULL;
-
-	printf("\n\n--id table\n\n");
-
-	if(head == NULL)
-		printf("(empty)\n");
-	else {
-		while(current_entry != NULL) {
-			printf("(%s, %d)\n", current_entry->symbol, current_entry->index);
-			current_entry = current_entry->np;
-		}
-	}
-
-	current_entry = head;
-
-	while(current_entry != NULL) {
-		next_entry = current_entry->np;
-		free(current_entry);
-		current_entry = next_entry;
-	}
-	return 1;
-}
 
