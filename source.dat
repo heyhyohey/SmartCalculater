@@ -3,5 +3,5 @@ C=B+20;
 C=C-40.7;
 if(C>=100) then print C;
 else	print "Small";
-		print "END";
+	print "END";
 endif;

@@ -30,8 +30,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_YY_SMART_CALCULATOR_TAB_H_INCLUDED
-# define YY_YY_SMART_CALCULATOR_TAB_H_INCLUDED
+#ifndef YY_YY_PARSER_TAB_H_INCLUDED
+# define YY_YY_PARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -45,34 +45,44 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TIF = 258,
-    TTHEN = 259,
-    TELSE = 260,
-    TENDIF = 261,
-    TPRINT = 262,
-    TASSIGN = 263,
-    TADD = 264,
-    TSUB = 265,
-    TMUL = 266,
-    TDIV = 267,
-    TEQUAL = 268,
-    TNOTEQUAL = 269,
-    TGREATER = 270,
-    TSMALLER = 271,
-    TGREATEROREQUAL = 272,
-    TSMALLEROREQUAL = 273,
-    TCOMMANDEND = 274,
-    TLEFTPAREN = 275,
-    TRIGHTPAREN = 276,
-    TID = 277,
-    TINTEGER = 278,
-    TSTRING = 279
+    IF = 258,
+    THEN = 259,
+    ELSE = 260,
+    ENDIF = 261,
+    PRINT = 262,
+    ASSIGN = 263,
+    ADD = 264,
+    SUB = 265,
+    MUL = 266,
+    DIV = 267,
+    EQUAL = 268,
+    NOTEQUAL = 269,
+    GREATER = 270,
+    SMALLER = 271,
+    GREATEROREQUAL = 272,
+    SMALLEROREQUAL = 273,
+    COMMANDEND = 274,
+    LEFTPAREN = 275,
+    RIGHTPAREN = 276,
+    ID = 277,
+    NUMBER = 278,
+    STRING = 279
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 41 "parser.y" /* yacc.c:1909  */
+
+	char *string;
+
+#line 83 "parser.tab.h" /* yacc.c:1909  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -82,4 +92,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_SMART_CALCULATOR_TAB_H_INCLUDED  */
+#endif /* !YY_YY_PARSER_TAB_H_INCLUDED  */

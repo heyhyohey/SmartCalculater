@@ -62,12 +62,45 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "smart_calculator.y" /* yacc.c:339  */
+#line 1 "parser.y" /* yacc.c:339  */
 
 	#include <stdio.h>
+	#include <string.h>
 	#include <stdlib.h>
+	#define BUF_SIZE 9192
+	#define TABLE_SIZE 256
+	#define SYMBOL_SIZE 128
 
-#line 71 "smart_calculator.tab.c" /* yacc.c:339  */
+	extern FILE *yyin;
+	extern int yylex();
+	extern void yyerror(char const* msg);
+	
+	typedef struct symbol {
+		char symbol[SYMBOL_SIZE];
+	}SYMBOL;
+
+	SYMBOL symbol_table[TABLE_SIZE];
+
+	int global_index = 0;
+	int symbol_number = 0;
+	char buf[BUF_SIZE];
+
+	void insert(char* symbol) {
+		strcpy(symbol_table[global_index].symbol, symbol);
+		global_index++;
+	}
+
+	int search(char* symbol) {
+		int i = 0;
+		for (i=0; i<global_index; i++) {
+			if (!strcmp(symbol, symbol_table[i].symbol))
+				return 1;
+		}
+		return 0;
+	}
+
+
+#line 104 "parser.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -86,9 +119,9 @@
 #endif
 
 /* In a future release of Bison, this section will be replaced
-   by #include "smart_calculator.tab.h".  */
-#ifndef YY_YY_SMART_CALCULATOR_TAB_H_INCLUDED
-# define YY_YY_SMART_CALCULATOR_TAB_H_INCLUDED
+   by #include "parser.tab.h".  */
+#ifndef YY_YY_PARSER_TAB_H_INCLUDED
+# define YY_YY_PARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -102,34 +135,44 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TIF = 258,
-    TTHEN = 259,
-    TELSE = 260,
-    TENDIF = 261,
-    TPRINT = 262,
-    TASSIGN = 263,
-    TADD = 264,
-    TSUB = 265,
-    TMUL = 266,
-    TDIV = 267,
-    TEQUAL = 268,
-    TNOTEQUAL = 269,
-    TGREATER = 270,
-    TSMALLER = 271,
-    TGREATEROREQUAL = 272,
-    TSMALLEROREQUAL = 273,
-    TCOMMANDEND = 274,
-    TLEFTPAREN = 275,
-    TRIGHTPAREN = 276,
-    TID = 277,
-    TINTEGER = 278,
-    TSTRING = 279
+    IF = 258,
+    THEN = 259,
+    ELSE = 260,
+    ENDIF = 261,
+    PRINT = 262,
+    ASSIGN = 263,
+    ADD = 264,
+    SUB = 265,
+    MUL = 266,
+    DIV = 267,
+    EQUAL = 268,
+    NOTEQUAL = 269,
+    GREATER = 270,
+    SMALLER = 271,
+    GREATEROREQUAL = 272,
+    SMALLEROREQUAL = 273,
+    COMMANDEND = 274,
+    LEFTPAREN = 275,
+    RIGHTPAREN = 276,
+    ID = 277,
+    NUMBER = 278,
+    STRING = 279
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 41 "parser.y" /* yacc.c:355  */
+
+	char *string;
+
+#line 173 "parser.tab.c" /* yacc.c:355  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -139,11 +182,11 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_SMART_CALCULATOR_TAB_H_INCLUDED  */
+#endif /* !YY_YY_PARSER_TAB_H_INCLUDED  */
 
 /* Copy the second part of user declarations.  */
 
-#line 147 "smart_calculator.tab.c" /* yacc.c:358  */
+#line 190 "parser.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -383,18 +426,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  15
+#define YYFINAL  16
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   37
+#define YYLAST   44
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  25
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  12
+#define YYNNTS  17
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  25
+#define YYNRULES  32
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  45
+#define YYNSTATES  53
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -442,9 +485,10 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    12,    15,    18,    19,    22,    23,    24,    27,    28,
-      31,    34,    35,    38,    39,    40,    41,    44,    47,    50,
-      51,    52,    53,    54,    55,    58
+       0,    74,    74,    82,    83,    85,    87,    88,    89,    91,
+      92,    98,   100,   101,   103,   105,   106,   108,   110,   112,
+     113,   114,   115,   116,   117,   119,   121,   122,   124,   125,
+     126,   127,   129
 };
 #endif
 
@@ -453,13 +497,14 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "TIF", "TTHEN", "TELSE", "TENDIF",
-  "TPRINT", "TASSIGN", "TADD", "TSUB", "TMUL", "TDIV", "TEQUAL",
-  "TNOTEQUAL", "TGREATER", "TSMALLER", "TGREATEROREQUAL",
-  "TSMALLEROREQUAL", "TCOMMANDEND", "TLEFTPAREN", "TRIGHTPAREN", "TID",
-  "TINTEGER", "TSTRING", "$accept", "program", "statements", "statement",
-  "print_statement", "calculate_statement", "variable", "operator",
-  "if_statement", "if_condition", "comparison", "else_statement", YY_NULLPTR
+  "$end", "error", "$undefined", "IF", "THEN", "ELSE", "ENDIF", "PRINT",
+  "ASSIGN", "ADD", "SUB", "MUL", "DIV", "EQUAL", "NOTEQUAL", "GREATER",
+  "SMALLER", "GREATEROREQUAL", "SMALLEROREQUAL", "COMMANDEND", "LEFTPAREN",
+  "RIGHTPAREN", "ID", "NUMBER", "STRING", "$accept", "program", "commands",
+  "command", "statement", "print_statement", "if_statement",
+  "else_statement", "endif_statement", "multiple_print_statement",
+  "condition_statement", "condition", "comparison", "assign_statement",
+  "variable", "operator", "id", YY_NULLPTR
 };
 #endif
 
@@ -474,10 +519,10 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF -22
+#define YYPACT_NINF -21
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-22)))
+  (!!((Yystate) == (-21)))
 
 #define YYTABLE_NINF -1
 
@@ -488,11 +533,12 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -1,    -3,   -21,     5,    19,    -1,     3,   -22,   -22,   -22,
-      18,     2,   -22,   -22,   -18,   -22,     6,   -22,    -1,    20,
-      -6,   -22,   -22,     4,   -22,    -1,   -22,   -22,   -22,   -22,
-     -22,   -22,   -22,     7,   -22,   -22,   -22,   -22,   -18,     8,
-     -22,    23,    -1,     9,   -22
+       1,   -14,   -17,   -21,     9,   -21,     1,   -21,    -9,     0,
+      13,    10,    12,     6,   -21,   -21,   -21,   -21,   -21,   -21,
+      23,    25,   -21,   -20,    11,    -1,    14,   -21,   -21,   -21,
+     -21,    15,   -21,    30,   -21,   -21,   -21,   -21,   -21,   -21,
+      16,    23,   -21,   -21,   -21,   -21,   -20,     1,   -21,    14,
+     -21,   -21,   -21
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -500,25 +546,26 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     0,     0,     2,     0,     7,     6,     5,
-       0,     0,     8,     9,     0,     1,     0,     3,     0,     0,
-       0,    11,    12,     0,     4,    25,    17,    19,    20,    21,
-      22,    23,    24,     0,    13,    14,    15,    16,     0,     0,
-      10,     0,     0,     0,    18
+       0,     0,     0,    32,     0,     2,     3,     5,     0,     0,
+       0,     0,     0,     0,    10,     9,     1,     4,     8,     6,
+       0,     0,     7,     0,     0,     0,    12,    13,    14,    11,
+      27,     0,    26,     0,    19,    20,    21,    22,    23,    24,
+       0,    15,    28,    29,    30,    31,     0,     0,    18,     0,
+      16,    25,    17
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -22,   -22,    10,    -5,   -22,   -22,    -4,   -22,   -22,   -22,
-     -22,   -22
+     -21,   -21,    29,   -11,   -21,   -19,   -21,   -21,   -21,    -4,
+     -21,   -21,   -21,   -21,    -8,   -21,    -2
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,     6,     7,     8,    23,    38,     9,    10,
-      33,    19
+      -1,     4,     5,     6,     7,     8,     9,    21,    29,    27,
+      10,    24,    40,    11,    31,    46,    12
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -526,45 +573,50 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      16,    12,     1,    13,    21,    22,     2,    27,    28,    29,
-      30,    31,    32,    34,    35,    36,    37,    11,    14,    15,
-      16,     3,    17,    18,    20,    24,    26,    42,    25,    41,
-      39,    44,     0,     0,    40,     0,     0,    43
+      15,    26,     3,    30,     1,     3,    13,    14,     2,    16,
+      18,    25,    34,    35,    36,    37,    38,    39,    20,    19,
+      23,    32,    49,     3,    42,    43,    44,    45,     3,    22,
+       2,    28,    33,    41,    47,    17,    52,    50,    51,    48,
+       0,     0,     0,     0,    32
 };
 
 static const yytype_int8 yycheck[] =
 {
-       5,    22,     3,    24,    22,    23,     7,    13,    14,    15,
-      16,    17,    18,     9,    10,    11,    12,    20,    13,     0,
-      25,    22,    19,     5,    22,    19,     6,     4,    18,    21,
-      23,    22,    -1,    -1,    38,    -1,    -1,    42
+       2,    20,    22,    23,     3,    22,    20,    24,     7,     0,
+      19,    13,    13,    14,    15,    16,    17,    18,     5,    19,
+       8,    23,    41,    22,     9,    10,    11,    12,    22,    19,
+       7,     6,    21,    19,     4,     6,    47,    41,    46,    23,
+      -1,    -1,    -1,    -1,    46
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     7,    22,    26,    27,    28,    29,    30,    33,
-      34,    20,    22,    24,    13,     0,    28,    19,     5,    36,
-      22,    22,    23,    31,    19,    27,     6,    13,    14,    15,
-      16,    17,    18,    35,     9,    10,    11,    12,    32,    23,
-      31,    21,     4,    28,    22
+       0,     3,     7,    22,    26,    27,    28,    29,    30,    31,
+      35,    38,    41,    20,    24,    41,     0,    27,    19,    19,
+       5,    32,    19,     8,    36,    41,    30,    34,     6,    33,
+      23,    39,    41,    21,    13,    14,    15,    16,    17,    18,
+      37,    19,     9,    10,    11,    12,    40,     4,    23,    30,
+      34,    39,    28
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    25,    26,    27,    27,    28,    28,    28,    29,    29,
-      30,    31,    31,    32,    32,    32,    32,    33,    34,    35,
-      35,    35,    35,    35,    35,    36
+       0,    25,    26,    27,    27,    28,    29,    29,    29,    30,
+      30,    31,    32,    32,    33,    34,    34,    35,    36,    37,
+      37,    37,    37,    37,    37,    38,    39,    39,    40,    40,
+      40,    40,    41
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     2,     3,     1,     1,     1,     2,     2,
-       5,     1,     1,     1,     1,     1,     1,     3,     9,     1,
-       1,     1,     1,     1,     1,     2
+       0,     2,     1,     1,     2,     1,     2,     2,     2,     2,
+       2,     3,     2,     2,     1,     2,     3,     6,     3,     1,
+       1,     1,     1,     1,     1,     5,     1,     1,     1,     1,
+       1,     1,     1
 };
 
 
@@ -1241,79 +1293,153 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 15 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d", (yyvsp[0])); }
-#line 1247 "smart_calculator.tab.c" /* yacc.c:1646  */
+#line 74 "parser.y" /* yacc.c:1646  */
+    {
+		int i = 0;
+		for (i=0; i<global_index; i++) {
+			printf("double %s;\n", symbol_table[i].symbol);
+		}
+		printf("%s", (yyvsp[0].string));
+	}
+#line 1305 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 18 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d%d", (yyvsp[-1]), (yyvsp[0])); }
-#line 1253 "smart_calculator.tab.c" /* yacc.c:1646  */
+#line 82 "parser.y" /* yacc.c:1646  */
+    { (yyval.string) = (yyvsp[0].string); }
+#line 1311 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 19 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d%d%d", (yyvsp[-2]), (yyvsp[-1]), (yyvsp[0])); }
-#line 1259 "smart_calculator.tab.c" /* yacc.c:1646  */
+#line 83 "parser.y" /* yacc.c:1646  */
+    { (yyval.string) = strcat((yyvsp[-1].string), (yyvsp[0].string)); }
+#line 1317 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 5:
+#line 85 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "%s", (yyvsp[0].string)); }
+#line 1323 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 6:
+#line 87 "parser.y" /* yacc.c:1646  */
+    { (yyval.string) = (yyvsp[-1].string); }
+#line 1329 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 7:
+#line 88 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "%s;\n", (yyvsp[-1].string)); }
+#line 1335 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 27 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%df(%d\\n", (yyvsp[-1]), (yyvsp[0])); }
-#line 1265 "smart_calculator.tab.c" /* yacc.c:1646  */
+#line 89 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "%s;", (yyvsp[-1].string)); }
+#line 1341 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 28 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%df(%d\\n)", (yyvsp[-1]), (yyvsp[0])); }
-#line 1271 "smart_calculator.tab.c" /* yacc.c:1646  */
+#line 91 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "printf(\"%%lf\\n\", %s)", (yyvsp[0].string)); }
+#line 1347 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 10:
+#line 92 "parser.y" /* yacc.c:1646  */
+    { 
+		strcpy(buf, (yyvsp[0].string));
+		buf[strlen((yyvsp[0].string))-1] = '\0';
+		sprintf((yyval.string), "printf(%s\\n\")", buf);
+	}
+#line 1357 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 11:
+#line 98 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "%s%s\n", (yyvsp[-2].string), (yyvsp[-1].string)); }
+#line 1363 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 35 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d", (yyvsp[0])); }
-#line 1277 "smart_calculator.tab.c" /* yacc.c:1646  */
+#line 100 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "else {\n%s}", (yyvsp[0].string)); }
+#line 1369 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 13:
+#line 101 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "else {\n%s}", (yyvsp[0].string)); }
+#line 1375 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 14:
+#line 103 "parser.y" /* yacc.c:1646  */
+    {}
+#line 1381 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 15:
+#line 105 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "%s;\n", (yyvsp[-1].string)); }
+#line 1387 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 16:
+#line 106 "parser.y" /* yacc.c:1646  */
+    { sprintf(buf, "%s;\n", (yyvsp[-2].string)); (yyval.string) = strcat(buf, (yyvsp[0].string)); }
+#line 1393 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 17:
+#line 108 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "if(%s) {\n%s\n}\n", (yyvsp[-3].string), (yyvsp[0].string)); }
+#line 1399 "parser.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 18:
+#line 110 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "%s%s%s", (yyvsp[-2].string), (yyvsp[-1].string), (yyvsp[0].string)); }
+#line 1405 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 50 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d", (yyvsp[0])); }
-#line 1283 "smart_calculator.tab.c" /* yacc.c:1646  */
+#line 112 "parser.y" /* yacc.c:1646  */
+    { (yyval.string) = (yyvsp[0].string); }
+#line 1411 "parser.tab.c" /* yacc.c:1646  */
     break;
 
-  case 20:
-#line 51 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d", (yyvsp[0])); }
-#line 1289 "smart_calculator.tab.c" /* yacc.c:1646  */
+  case 25:
+#line 119 "parser.y" /* yacc.c:1646  */
+    { sprintf((yyval.string), "%s=%s%s%s", (yyvsp[-4].string), (yyvsp[-2].string), (yyvsp[-1].string), (yyvsp[0].string)); }
+#line 1417 "parser.tab.c" /* yacc.c:1646  */
     break;
 
-  case 21:
-#line 52 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d", (yyvsp[0])); }
-#line 1295 "smart_calculator.tab.c" /* yacc.c:1646  */
+  case 26:
+#line 121 "parser.y" /* yacc.c:1646  */
+    { (yyval.string) = (yyvsp[0].string); }
+#line 1423 "parser.tab.c" /* yacc.c:1646  */
     break;
 
-  case 22:
-#line 53 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d", (yyvsp[0])); }
-#line 1301 "smart_calculator.tab.c" /* yacc.c:1646  */
+  case 28:
+#line 124 "parser.y" /* yacc.c:1646  */
+    { (yyval.string) = (yyvsp[0].string); }
+#line 1429 "parser.tab.c" /* yacc.c:1646  */
     break;
 
-  case 23:
-#line 54 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d", (yyvsp[0])); }
-#line 1307 "smart_calculator.tab.c" /* yacc.c:1646  */
+  case 32:
+#line 129 "parser.y" /* yacc.c:1646  */
+    { 
+		if(!search((yyvsp[0].string)))
+			insert((yyvsp[0].string));
+		(yyval.string) = (yyvsp[0].string); 
+	}
+#line 1439 "parser.tab.c" /* yacc.c:1646  */
     break;
 
-  case 24:
-#line 55 "smart_calculator.y" /* yacc.c:1646  */
-    { printf("%d", (yyvsp[0])); }
-#line 1313 "smart_calculator.tab.c" /* yacc.c:1646  */
-    break;
 
-
-#line 1317 "smart_calculator.tab.c" /* yacc.c:1646  */
+#line 1443 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1541,15 +1667,33 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 77 "smart_calculator.y" /* yacc.c:1906  */
+#line 134 "parser.y" /* yacc.c:1906  */
 
 
-int main()
+int yywrap()
 {
+	return 1;
+}
+
+void yyerror(char const* msg)
+{
+	fprintf(stderr, "%s\n", msg);
+}
+
+int main(int argc, char *argv[])
+{
+	printf("#include <stdio.h>\n\nint main()\n{\n");
+
+	// Read a file
+	if(argc > 1)
+		yyin = fopen(argv[1], "r");
+
+	// Parse
 	yyparse();
+
+	// Print the footer
+	printf("return 0;\n}\n");
+
 	return 0;
 }
 
-void yyerror() {
-
-}
