@@ -13,17 +13,17 @@ extern int yyparse();
 "else"				{ return(ELSE); }
 "endif"				{ return(ENDIF); }
 "print"				{ return(PRINT); }
-"="					{ return(ASSIGN); }
-"+"					{ return(ADD); }
-"-"					{ return(SUB); }
-"*"					{ return(MUL); }
-"/"					{ return(DIV); }
-"=="				{ return(EQUAL); }
-"!="				{ return(NOTEQUAL); }
-">"					{ return(GREATER); }
-"<"					{ return(SMALLER); }
-">="				{ return(GREATEROREQUAL); }
-"<="				{ return(SMALLEROREQUAL); }
+"="					{ yylval.string = strdup(yytext); return(ASSIGN); }
+"+"					{ yylval.string = strdup(yytext); return(ADD); }
+"-"					{ yylval.string = strdup(yytext); return(SUB); }
+"*"					{ yylval.string = strdup(yytext); return(MUL); }
+"/"					{ yylval.string = strdup(yytext); return(DIV); }
+"=="				{ yylval.string = strdup(yytext); return(EQUAL); }
+"!="				{ yylval.string = strdup(yytext); return(NOTEQUAL); }
+">"					{ yylval.string = strdup(yytext); return(GREATER); }
+"<"					{ yylval.string = strdup(yytext); return(SMALLER); }
+">="				{ yylval.string = strdup(yytext); return(GREATEROREQUAL); }
+"<="				{ yylval.string = strdup(yytext); return(SMALLEROREQUAL); }
 ";"					{ return(COMMANDEND); }
 "("					{ return(LEFTPAREN); }
 ")"					{ return(RIGHTPAREN); }
