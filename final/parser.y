@@ -2,7 +2,7 @@
 	#include <stdio.h>
 	#include <string.h>
 	#include <stdlib.h>
-	#define BUF_SIZE 65536
+	#define BUF_SIZE 4096
 
 	extern FILE *yyin;
 	extern int yylex();
@@ -90,18 +90,16 @@
 %type <string> command
 %type <string> statement
 %type <string> if_statement
+%type <string> else_statement
+%type <string> print_statement
+%type <string> endif_statement
 %type <string> assign_statement
+%type <string> condition_statement
 %type <string> variable
 %type <string> operator
-/*
-%type <string> if_statement
-%type <string> assign_statement
-%type <string> print_statement
-%type <string> printable
-%type <string> command
-%type <string> condition
 %type <string> comparison
-*/
+%type <string> condition
+
 %left MUL DIV
 %left ADD SUB
 %right ASSIGN
@@ -115,20 +113,46 @@ program: commands {
 commands: command { $$ = $1; }
 	| command commands { $$ = strcat($1, $2); }
 	;
-command: statement COMMANDEND { sprintf($$, "%s;\n", $1); }
+command: statement{ sprintf($$, "%s\n", $1); }
 	;
-statement: if_statement { $$ = $1; }
-	| assign_statement
+statement: if_statement COMMANDEND { $$ = $1; }
+	| assign_statement COMMANDEND { sprintf($$, "%s;", $1); }
+	| print_statement COMMANDEND { sprintf($$, "%s;", $1); }
 	;
-if_statement: NUMBER { $$ = $1; }
+print_statement: PRINT ID { sprintf($$, "printf(\"%%lf\\n\", %s)", $2); }
+	| PRINT STRING { sprintf($$, "printf(%s)", $2); }
+	;
+if_statement: condition_statement else_statement endif_statement {
+			sprintf($$, "%s%s\n", $1, $2);
+		}
+	;
+else_statement: ELSE print_statement { sprintf($$, "else {\n%s\n}", $2); printf("=============\n%s\n==============\n", $2); }
+	|
+	;
+endif_statement: ENDIF {}
+	;
+multiplt_print_statement: print_statement { $$ = $1; }
+	| print_statement multiplt_print_statement { sprintf(
+condition_statement: IF LEFTPAREN condition RIGHTPAREN THEN command { sprintf($$, "if(%s) {\n%s\n}", $3, $6); }
+	;
+condition: ID comparison NUMBER { sprintf($$, "%s%s%s", $1, $2, $3); }
+	;
+comparison: EQUAL	{ $$ = $1; }
+	| NOTEQUAL
+	| GREATER
+	| SMALLER
+	| GREATEROREQUAL
+	| SMALLEROREQUAL
 	;
 assign_statement: ID ASSIGN variable operator variable {
+			/*
 			symbol_number = search($1);
-			printf("%s %d\n", $1, symbol_number);
 			
-			if(symbol_number==0)
+			if(symbol_number == 0)
 			 	insert($1);
 
+			sprintf($$, "%s=%s%s%s", $1, $3, $4, $5);
+			*/
 			sprintf($$, "%s=%s%s%s", $1, $3, $4, $5);
 		}
 	;
@@ -140,66 +164,6 @@ operator: ADD { $$ = $1; }
 	| MUL
 	| DIV
 	;
-/*
-program: commands {
-			printf("%s", $1);
-		}
-	;
-commands: command {
-			$$ = $1;
-		}
-	| commands command {
-			$$ = strcat($1, $2);
-		}
-	;
-command: assign_statement { $$ = $1; }
-	| if_statement { $$ = $1; }
-	;
-if_statement: IF LEFTPAREN condition RIGHTPAREN THEN print_statement COMMANDEND ELSE commands ENDIF COMMANDEND {
-			sprintf($$, "if(%s) {\n\t\t%s\n\t}\n\telse {\n%s\n}\n", $3, $6, $9);
-		}
-	;
-print_statement: PRINT printable COMMANDEND { sprintf($$, "printf(\"%%lf\\n\", %s);\n", $2);}
-	;
-printable: ID { $$ = $1; }
-	| STRING
-	;
-condition: ID comparison NUMBER	{ sprintf($$, "%s%s%s", $1, $2, $3); }
-	;
-comparison: EQUAL	{ $$ = $1; }
-	| NOTEQUAL
-	| GREATER
-	| SMALLER
-	| GREATEROREQUAL
-	| SMALLEROREQUAL
-	;
-assign_statement: ID ASSIGN variable operator variable COMMANDEND	{
-			symbol_number = search($1);
-			if(!symbol_number)
-			{
-			 	insert($1);
-			}
-			sprintf(b2, "\t%s%s%s%s%s;\n", $1, $2, $3, $4, $5);
-			$$ = b1;
-			strcat($$, b2);
-		 }
-	;
-variable:	ID { 
-			symbol_number = search($1);
-			if(!symbol_number)
-			{
-			 	insert($1);
-			}
-			$$ = $1;
-			}
-	|	NUMBER { $$ = $1; }
-	;
-operator:	ADD	{ $$ = $1; }
-	| SUB
-	| MUL
-	| DIV
-	;
-*/
 %%
 
 int yywrap()
@@ -248,7 +212,7 @@ int main(int argc, char *argv[])
 	}
 
 	// 5. Print the footer
-	printf("\n\treturn 0;\n}");
+	printf("\nreturn 0;\n}");
 
 	// 6. Close a file
 	if(head != NULL)
