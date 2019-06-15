@@ -11,8 +11,8 @@ if(C>=100) {
 printf("%lf\n", C);
 }
 else {
-printf("Small");
-printf("END");
+printf("Small\n");
+printf("END\n");
 }
 return 0;
 }

@@ -51,18 +51,14 @@
 %type <string> program
 %type <string> commands
 %type <string> command
-%type <string> statement
 %type <string> if_statement
-%type <string> else_statement
 %type <string> print_statement
-%type <string> endif_statement
 %type <string> assign_statement
-%type <string> condition_statement
+%type <string> expression
 %type <string> variable
 %type <string> operator
 %type <string> comparison
 %type <string> condition
-%type <string> multiple_print_statement
 %type <string> id
 
 %left MUL DIV
@@ -80,34 +76,25 @@ program: commands {
 	}
 	;
 commands: command { $$ = $1; }
-	| command commands { $$ = strcat($1, $2); }
+	| command commands { sprintf($$, "%s%s", $1, $2); }
 	;
-command: statement{ sprintf($$, "%s", $1); }
+command: if_statement { $$ = $1; }
+	| assign_statement
+	| print_statement
 	;
-statement: if_statement COMMANDEND { $$ = $1; }
-	| assign_statement COMMANDEND { sprintf($$, "%s;\n", $1); }
-	| print_statement COMMANDEND { sprintf($$, "%s;", $1); }
-	;
-print_statement: PRINT id { sprintf($$, "printf(\"%%lf\\n\", %s)", $2); }
-	| PRINT STRING { 
-		strcpy(buf, $2);
-		buf[strlen($2)-1] = '\0';
-		sprintf($$, "printf(%s\\n\")", buf);
+if_statement: IF LEFTPAREN condition RIGHTPAREN THEN commands ENDIF COMMANDEND { sprintf($$, "if(%s) {\n%s}\n", $3, $6); }
+	| IF LEFTPAREN condition RIGHTPAREN THEN commands ELSE commands ENDIF COMMANDEND {
+		sprintf($$, "if(%s) {\n%s}\nelse {\n%s}\n", $3, $6, $8);
 	}
 	;
-if_statement: condition_statement else_statement endif_statement { sprintf($$, "%s%s\n", $1, $2); }
+condition: variable comparison variable { sprintf($$, "%s%s%s", $1, $2, $3); }
 	;
-else_statement: ELSE print_statement { sprintf($$, "else {\n%s}", $2); }
-	|ELSE multiple_print_statement { sprintf($$, "else {\n%s}", $2); }
-	;
-endif_statement: ENDIF {}
-	;
-multiple_print_statement: print_statement COMMANDEND { sprintf($$, "%s;\n", $1); }
-	| print_statement COMMANDEND multiple_print_statement { sprintf(buf, "%s;\n", $1); $$ = strcat(buf, $3); }
-	;
-condition_statement: IF LEFTPAREN condition RIGHTPAREN THEN command { sprintf($$, "if(%s) {\n%s\n}\n", $3, $6); }
-	;
-condition: id comparison NUMBER { sprintf($$, "%s%s%s", $1, $2, $3); }
+print_statement: PRINT id COMMANDEND { sprintf($$, "printf(\"%%lf\\n\", %s);\n", $2); }
+	| PRINT STRING COMMANDEND { 
+		strcpy(buf, $2);
+		buf[strlen($2)-1] = '\0';
+		sprintf($$, "printf(%s\\n\");\n", buf);
+	}
 	;
 comparison: EQUAL	{ $$ = $1; }
 	| NOTEQUAL
@@ -116,8 +103,10 @@ comparison: EQUAL	{ $$ = $1; }
 	| GREATEROREQUAL
 	| SMALLEROREQUAL
 	;
-assign_statement: id ASSIGN variable operator variable { sprintf($$, "%s=%s%s%s", $1, $3, $4, $5); }
-	;
+assign_statement: id ASSIGN expression COMMANDEND { sprintf($$, "%s=%s;\n", $1, $3); }
+	; 
+expression: variable operator variable { sprintf($$, "%s%s%s", $1, $2, $3); }
+	| variable operator expression { sprintf($$, "%s%s%s", $1, $2, $3); }
 variable: id { $$ = $1; }
 	| NUMBER
 	;
